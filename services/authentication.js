@@ -8,6 +8,7 @@ const generateToken = (user) => {
   const payload = {
     id: user._id,
     email: user.email,
+    fullName: user.fullName,
     profilePicture: user.profilePicture,
     role: user.role,
   };

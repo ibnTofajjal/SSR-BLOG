@@ -2,9 +2,10 @@ const path = require("path");
 const express = require("express");
 const mongoose = require("mongoose");
 const cookieParser = require("cookie-parser");
+const checkAuthenticationCookie = require("./middlewares/authentication");
 
 const userRoute = require("./routes/user.route");
-const checkAuthenticationCookie = require("./middlewares/authentication");
+const blogRoute = require("./routes/blog.route");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -30,6 +31,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/user", userRoute);
+app.use("/blog", blogRoute);
 
 // Server
 app.listen(3000, () => {
