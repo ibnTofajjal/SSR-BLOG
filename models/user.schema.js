@@ -1,4 +1,5 @@
 const { Schema, model } = require("mongoose");
+const { randomBytes, createHmac } = require("crypto");
 
 // create a user shema
 const userSchema = new Schema(
@@ -19,7 +20,6 @@ const userSchema = new Schema(
     },
     salt: {
       type: String,
-      required: true,
     },
     role: {
       type: String,
@@ -33,6 +33,25 @@ const userSchema = new Schema(
   },
   { timestamps: true }
 );
+
+// Pre save hook with hmac password
+userSchema.pre("save", function (next) {
+  const user = this;
+
+  if (!user.isModified("password")) {
+    return next();
+  }
+
+  const salt = randomBytes(16).toString("hex");
+  const hashedPassword = createHmac("sha256", salt)
+    .update(user.password)
+    .digest("hex");
+
+  user.password = hashedPassword;
+  user.salt = salt;
+
+  next();
+});
 
 // create a model using the schema
 const User = model("User", userSchema);
